@@ -1,0 +1,40 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "Shaksham",
+      "email": "sakshamt563@gamil.com",
+      "passwordHash": "$2a$10$TSh1w601j/VXePrTeERAdOgvEL/iWafSfn/V5WyOdpbif1hjCYdKS",
+      "avatar": "🥷",
+      "country": "🌐",
+      "totalXp": 0,
+      "currentStreak": 0,
+      "longestStreak": 0,
+      "lastSolvedDate": null,
+      "streakFreezeCount": 1,
+      "solvedProblems": [],
+      "unlockedBadges": []
+    },
+    {
+      "id": 2,
+      "username": "Shaksham26",
+      "email": "sakshamt563@gmail.com",
+      "firstName": "Shaksham",
+      "lastName": "Tripathi",
+      "age": 21,
+      "role": "Student / Learner",
+      "passwordHash": "$2a$10$feNWNNjCkotgo0uGygLPfeVOFzdgmYwJ3xJMb.hGV6Mgnho7iQap6",
+      "avatar": "👨‍💻",
+      "country": "🌐",
+      "totalXp": 0,
+      "currentStreak": 0,
+      "longestStreak": 0,
+      "lastSolvedDate": null,
+      "streakFreezeCount": 1,
+      "solvedProblems": [],
+      "unlockedBadges": []
+    }
+  ],
+  "submissions": [],
+  "comments": []
+}
