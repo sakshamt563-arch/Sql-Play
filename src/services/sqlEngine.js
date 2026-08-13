@@ -1,6 +1,18 @@
 import initSqlJs from 'sql.js';
+import sqlWasmUrl from 'sql.js/dist/sql-wasm.wasm?url';
 
-const wasmUrl = '/sql-wasm.wasm';
+const getWasmUrls = () => {
+  const baseUrl = import.meta.env.BASE_URL || './';
+  const localWasm = baseUrl.endsWith('/') ? `${baseUrl}sql-wasm.wasm` : `${baseUrl}/sql-wasm.wasm`;
+  return [
+    localWasm,
+    './sql-wasm.wasm',
+    sqlWasmUrl,
+    'https://cdn.jsdelivr.net/npm/sql.js@1.12.0/dist/sql-wasm.wasm',
+    'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.wasm',
+    'https://unpkg.com/sql.js@1.12.0/dist/sql-wasm.wasm'
+  ];
+};
 
 let SQL = null;
 let sqlLoadingPromise = null;
@@ -17,32 +29,19 @@ export async function getSqlEngine() {
     : (initSqlJs && initSqlJs.default ? initSqlJs.default : window.initSqlJs);
 
   sqlLoadingPromise = new Promise(async (resolve, reject) => {
-    try {
-      const sqlInstance = await initFunction({
-        locateFile: (file) => {
-          if (file.endsWith('.wasm')) {
-            return wasmUrl;
-          }
-          return `/${file}`;
-        }
-      });
-      SQL = sqlInstance;
-      return resolve(SQL);
-    } catch (e1) {
-      console.warn("Vite WASM asset load failed, trying CDN fallback...", e1);
+    const urls = getWasmUrls();
+    for (const url of urls) {
+      try {
+        const sqlInstance = await initFunction({
+          locateFile: () => url
+        });
+        SQL = sqlInstance;
+        return resolve(SQL);
+      } catch (err) {
+        console.warn(`Failed to load SQLite WASM from ${url}:`, err);
+      }
     }
-
-    // CDN Fallback 1
-    try {
-      const sqlInstance = await initFunction({
-        locateFile: () => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.wasm`
-      });
-      SQL = sqlInstance;
-      return resolve(SQL);
-    } catch (e2) {
-      console.warn("CDN fallback failed", e2);
-      reject(new Error("Unable to load SQLite WebAssembly engine. Please check your internet connection or reload the page."));
-    }
+    reject(new Error("Unable to load SQLite WebAssembly engine. Please check your internet connection or reload the page."));
   });
 
   return sqlLoadingPromise;

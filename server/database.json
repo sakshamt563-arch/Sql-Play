@@ -26,15 +26,45 @@
       "passwordHash": "$2a$10$feNWNNjCkotgo0uGygLPfeVOFzdgmYwJ3xJMb.hGV6Mgnho7iQap6",
       "avatar": "👨‍💻",
       "country": "🌐",
-      "totalXp": 0,
-      "currentStreak": 0,
-      "longestStreak": 0,
-      "lastSolvedDate": null,
+      "totalXp": 35,
+      "currentStreak": 1,
+      "longestStreak": 1,
+      "lastSolvedDate": "2026-08-13",
       "streakFreezeCount": 1,
-      "solvedProblems": [],
-      "unlockedBadges": []
+      "solvedProblems": [
+        {
+          "problemId": "easy-1",
+          "pointsAwarded": 20,
+          "solvedAt": "2026-08-13T10:22:59.720Z"
+        },
+        {
+          "problemId": "easy-2",
+          "pointsAwarded": 15,
+          "solvedAt": "2026-08-13T10:24:34.608Z"
+        }
+      ],
+      "unlockedBadges": [
+        "first-query"
+      ]
     }
   ],
-  "submissions": [],
+  "submissions": [
+    {
+      "id": 1,
+      "userId": 2,
+      "problemId": "easy-1",
+      "query": "SELECT * FROM employees;",
+      "pointsAwarded": 20,
+      "submittedAt": "2026-08-13T10:22:59.720Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "problemId": "easy-2",
+      "query": "SELECT name, salary FROM employees WHERE salary > 60000;",
+      "pointsAwarded": 15,
+      "submittedAt": "2026-08-13T10:24:34.608Z"
+    }
+  ],
   "comments": []
 }
