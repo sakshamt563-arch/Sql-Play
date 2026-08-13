@@ -5,9 +5,9 @@ const getWasmUrls = () => {
   const baseUrl = import.meta.env.BASE_URL || './';
   const localWasm = baseUrl.endsWith('/') ? `${baseUrl}sql-wasm.wasm` : `${baseUrl}/sql-wasm.wasm`;
   return [
+    sqlWasmUrl,
     localWasm,
     './sql-wasm.wasm',
-    sqlWasmUrl,
     'https://cdn.jsdelivr.net/npm/sql.js@1.12.0/dist/sql-wasm.wasm',
     'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.wasm',
     'https://unpkg.com/sql.js@1.12.0/dist/sql-wasm.wasm'
@@ -28,21 +28,36 @@ export async function getSqlEngine() {
     ? initSqlJs 
     : (initSqlJs && initSqlJs.default ? initSqlJs.default : window.initSqlJs);
 
-  sqlLoadingPromise = new Promise(async (resolve, reject) => {
+  sqlLoadingPromise = (async () => {
     const urls = getWasmUrls();
     for (const url of urls) {
       try {
-        const sqlInstance = await initFunction({
-          locateFile: () => url
-        });
-        SQL = sqlInstance;
-        return resolve(SQL);
+        // Try fetching ArrayBuffer directly first for zero-path-ambiguity loading
+        const response = await fetch(url);
+        if (response.ok) {
+          const wasmBinary = await response.arrayBuffer();
+          const sqlInstance = await initFunction({ wasmBinary });
+          SQL = sqlInstance;
+          return SQL;
+        }
       } catch (err) {
-        console.warn(`Failed to load SQLite WASM from ${url}:`, err);
+        console.warn(`ArrayBuffer fetch failed for ${url}:`, err);
+      }
+
+      try {
+        // Fallback to standard locateFile
+        const sqlInstance = await initFunction({ locateFile: () => url });
+        SQL = sqlInstance;
+        return SQL;
+      } catch (err) {
+        console.warn(`locateFile WASM load failed for ${url}:`, err);
       }
     }
-    reject(new Error("Unable to load SQLite WebAssembly engine. Please check your internet connection or reload the page."));
-  });
+
+    // Reset loading promise so subsequent user actions retry instead of returning cached rejection
+    sqlLoadingPromise = null;
+    throw new Error("Unable to load SQLite WebAssembly engine. Please check your internet connection or reload the page.");
+  })();
 
   return sqlLoadingPromise;
 }
